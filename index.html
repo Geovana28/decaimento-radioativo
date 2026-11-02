@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Radioactive Decay Simulator — explore half-life, Carbon-14 dating, and exponential decay with real isotope data.">
+    <title>Radioactive Decay Simulator | Nuclear Physics Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-icon">☢️</div>
+                <div>
+                    <h1>Radioactive Decay</h1>
+                    <p class="subtitle">Half-Life & Carbon-14 Dating Lab</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="badge badge-neon">Exponential Decay</span>
+                <span class="badge badge-amber">N(t) = N₀·e<sup>−λt</sup></span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Charts & Visualization -->
+            <section class="charts-section">
+                <!-- Atom Visualization -->
+                <div class="chart-card atom-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Atom Visualization</h2>
+                        <div class="atom-counters">
+                            <span class="atom-counter active-counter" id="activeCounter">● <span id="activeCount">100</span> Active</span>
+                            <span class="atom-counter decayed-counter" id="decayedCounter">● <span id="decayedCount">0</span> Decayed</span>
+                        </div>
+                    </div>
+                    <div class="atom-canvas-wrapper">
+                        <canvas id="atomCanvas"></canvas>
+                    </div>
+                    <div class="atom-actions">
+                        <button class="btn btn-primary" id="btnAnimate">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Animate Decay
+                        </button>
+                        <button class="btn btn-secondary" id="btnReset">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Decay Curve -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Decay Curve — N(t)</h2>
+                        <span class="chart-badge" id="halfLifeLabel">Half-life: 5,730 years</span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="decayChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Dating Calculator -->
+                <div class="chart-card dating-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">🦴 Fossil Dating Calculator</h2>
+                    </div>
+                    <div class="dating-content">
+                        <div class="dating-input-group">
+                            <label>Remaining percentage of isotope:</label>
+                            <div class="dating-input-row">
+                                <input type="range" id="remainingSlider" min="0.1" max="99" value="25" step="0.1" class="slider-neon">
+                                <span class="dating-pct" id="remainingPct">25.0%</span>
+                            </div>
+                        </div>
+                        <div class="dating-result" id="datingResult">
+                            <div class="dating-result-icon">🔬</div>
+                            <div>
+                                <div class="dating-age" id="datingAge">≈ 11,460 years old</div>
+                                <div class="dating-detail" id="datingDetail">2 half-lives have passed</div>
+                            </div>
+                        </div>
+                        <div class="dating-timeline" id="datingTimeline">
+                            <div class="timeline-bar">
+                                <div class="timeline-fill" id="timelineFill" style="width: 50%"></div>
+                                <div class="timeline-markers" id="timelineMarkers"></div>
+                            </div>
+                            <div class="timeline-labels">
+                                <span>Present</span>
+                                <span id="timelineMax">57,300 yr ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Controls Sidebar -->
+            <aside class="controls-panel">
+                <!-- Isotope Selector -->
+                <div class="control-group">
+                    <h3 class="control-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                        Isotope
+                    </h3>
+                    <div class="isotope-grid" id="isotopeGrid">
+                        <button class="isotope-btn active" data-halflife="5730" data-name="Carbon-14" data-symbol="¹⁴C" data-unit="years" data-use="Fossil dating up to ~50,000 years">
+                            <span class="isotope-symbol">¹⁴C</span>
+                            <span class="isotope-name">Carbon-14</span>
+                            <span class="isotope-hl">5,730 yr</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="4500000000" data-name="Uranium-238" data-symbol="²³⁸U" data-unit="years" data-use="Dating rocks & Earth's age">
+                            <span class="isotope-symbol">²³⁸U</span>
+                            <span class="isotope-name">Uranium-238</span>
+                            <span class="isotope-hl">4.5B yr</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="1250000000" data-name="Potassium-40" data-symbol="⁴⁰K" data-unit="years" data-use="Dating volcanic rocks & minerals">
+                            <span class="isotope-symbol">⁴⁰K</span>
+                            <span class="isotope-name">Potassium-40</span>
+                            <span class="isotope-hl">1.25B yr</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="703800000" data-name="Uranium-235" data-symbol="²³⁵U" data-unit="years" data-use="Nuclear fuel & geological dating">
+                            <span class="isotope-symbol">²³⁵U</span>
+                            <span class="isotope-name">Uranium-235</span>
+                            <span class="isotope-hl">703.8M yr</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="0.02199" data-name="Iodine-131" data-symbol="¹³¹I" data-unit="years" data-use="Thyroid treatment, 8.02 days">
+                            <span class="isotope-symbol">¹³¹I</span>
+                            <span class="isotope-name">Iodine-131</span>
+                            <span class="isotope-hl">8.02 days</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="28.8" data-name="Strontium-90" data-symbol="⁹⁰Sr" data-unit="years" data-use="Nuclear fallout, bone seeker">
+                            <span class="isotope-symbol">⁹⁰Sr</span>
+                            <span class="isotope-name">Strontium-90</span>
+                            <span class="isotope-hl">28.8 yr</span>
+                        </button>
+                    </div>
+                    <div class="isotope-info" id="isotopeInfo">
+                        <span class="info-icon">ℹ️</span>
+                        <span id="isotopeUse">Fossil dating up to ~50,000 years</span>
+                    </div>
+                </div>
+
+                <!-- Parameters -->
+                <div class="control-group">
+                    <h3 class="control-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+                        Parameters
+                    </h3>
+
+                    <div class="slider-control">
+                        <div class="slider-header">
+                            <label>Initial Atoms (N₀)</label>
+                            <span class="slider-value slider-value-neon" id="atomsValue">200</span>
+                        </div>
+                        <input type="range" id="atomsSlider" min="20" max="500" value="200" step="10" class="slider-neon">
+                        <div class="slider-range"><span>20</span><span>500</span></div>
+                    </div>
+
+                    <div class="slider-control">
+                        <div class="slider-header">
+                            <label>Number of Half-Lives</label>
+                            <span class="slider-value slider-value-amber" id="halvesValue">6</span>
+                        </div>
+                        <input type="range" id="halvesSlider" min="1" max="15" value="6" step="1" class="slider-amber">
+                        <div class="slider-range"><span>1</span><span>15</span></div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="control-group">
+                    <h3 class="control-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        Decay Data
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-card stat-neon">
+                            <span class="stat-label">Half-Life</span>
+                            <span class="stat-value" id="statHalfLife">5,730 yr</span>
+                        </div>
+                        <div class="stat-card stat-amber">
+                            <span class="stat-label">Decay Constant (λ)</span>
+                            <span class="stat-value" id="statLambda">—</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">After 1 Half-Life</span>
+                            <span class="stat-value" id="statAfter1">50%</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">After 5 Half-Lives</span>
+                            <span class="stat-value" id="statAfter5">3.1%</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Mean Lifetime</span>
+                            <span class="stat-value" id="statMeanLife">—</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Activity at t=0</span>
+                            <span class="stat-value" id="statActivity">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equation -->
+                <div class="control-group equation-group">
+                    <h3 class="control-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        Equations
+                    </h3>
+                    <div class="equation-box">
+                        <div class="equation eq-neon">N(t) = N₀ · e<sup>−λt</sup></div>
+                        <div class="equation-label">Remaining atoms at time t</div>
+                        <div class="equation eq-amber">λ = ln(2) / t<sub>½</sub></div>
+                        <div class="equation-label">Decay constant from half-life</div>
+                        <div class="equation eq-neon">t = −ln(N/N₀) / λ</div>
+                        <div class="equation-label">Age from remaining fraction</div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
